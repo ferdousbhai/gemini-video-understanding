@@ -68,7 +68,7 @@ def wait_for_file_processing(client, file) -> None:
 def understand_video(
     source: str,
     prompt: str,
-    model: str = "gemini-2.5-pro",
+    model: str = "gemini-3-pro-preview",
     fps: float | None = None,
     start_offset: float | None = None,
     end_offset: float | None = None,
@@ -80,7 +80,7 @@ def understand_video(
     Args:
         source: Path to local video file or YouTube URL
         prompt: Question or instruction for analyzing the video
-        model: Gemini model to use (default: gemini-2.5-pro)
+        model: Gemini model to use (default: gemini-3-pro-preview)
         fps: Custom frame rate sampling (default: 1 fps)
         start_offset: Start time in seconds for video clipping
         end_offset: End time in seconds for video clipping
@@ -215,8 +215,8 @@ Examples:
     )
     parser.add_argument(
         "--model",
-        default="gemini-2.5-pro",
-        help="Gemini model to use (default: gemini-2.5-pro)",
+        default="gemini-3-pro-preview",
+        help="Gemini model to use (default: gemini-3-pro-preview)",
     )
     parser.add_argument(
         "--fps",
