@@ -39,3 +39,14 @@ uv run ~/.claude/skills/gemini-video-understanding/scripts/understand_video.py \
 ## API Key
 
 Uses `GEMINI_API_KEY` env var, or pass `--api-key KEY`.
+
+## Updating Models
+
+Edit `~/.claude/skills/gemini-video-understanding/config.json`:
+
+```json
+{
+  "default_model": "gemini-3-pro-preview",
+  "fast_model": "gemini-3-flash-preview"
+}
+```

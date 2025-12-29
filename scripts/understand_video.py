@@ -17,10 +17,27 @@ Supports:
 """
 
 import argparse
+import json
 import os
 import sys
 import time
 from pathlib import Path
+
+# Load model config from config.json
+SCRIPT_DIR = Path(__file__).parent.parent
+CONFIG_FILE = SCRIPT_DIR / "config.json"
+
+DEFAULT_MODEL = "gemini-3-pro-preview"
+FAST_MODEL = "gemini-3-flash-preview"
+
+if CONFIG_FILE.exists():
+    try:
+        with open(CONFIG_FILE) as f:
+            config = json.load(f)
+            DEFAULT_MODEL = config.get("default_model", DEFAULT_MODEL)
+            FAST_MODEL = config.get("fast_model", FAST_MODEL)
+    except (json.JSONDecodeError, OSError):
+        pass  # Use hardcoded defaults on error
 
 
 def get_mime_type(file_path: str) -> str:
@@ -68,7 +85,7 @@ def wait_for_file_processing(client, file) -> None:
 def understand_video(
     source: str,
     prompt: str,
-    model: str = "gemini-3-pro-preview",
+    model: str | None = None,
     fps: float | None = None,
     start_offset: float | None = None,
     end_offset: float | None = None,
@@ -80,7 +97,7 @@ def understand_video(
     Args:
         source: Path to local video file or YouTube URL
         prompt: Question or instruction for analyzing the video
-        model: Gemini model to use (default: gemini-3-pro-preview)
+        model: Gemini model to use (default from config.json)
         fps: Custom frame rate sampling (default: 1 fps)
         start_offset: Start time in seconds for video clipping
         end_offset: End time in seconds for video clipping
@@ -103,6 +120,10 @@ def understand_video(
         sys.exit(1)
 
     client = genai.Client(api_key=resolved_api_key)
+
+    # Use default model if not specified
+    if model is None:
+        model = DEFAULT_MODEL
 
     # Build content parts
     parts = []
@@ -215,8 +236,8 @@ Examples:
     )
     parser.add_argument(
         "--model",
-        default="gemini-3-pro-preview",
-        help="Gemini model to use (default: gemini-3-pro-preview)",
+        default=None,
+        help=f"Gemini model to use (default: {DEFAULT_MODEL})",
     )
     parser.add_argument(
         "--fps",
@@ -242,13 +263,13 @@ Examples:
     parser.add_argument(
         "--fast",
         action="store_true",
-        help="Use faster flash model (gemini-3-flash-preview)",
+        help=f"Use faster flash model ({FAST_MODEL})",
     )
 
     args = parser.parse_args()
 
     # --fast overrides --model
-    model = "gemini-3-flash-preview" if args.fast else args.model
+    model = FAST_MODEL if args.fast else args.model
 
     result = understand_video(
         source=args.source,

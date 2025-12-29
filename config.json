@@ -1,0 +1,4 @@
+{
+  "default_model": "gemini-3-pro-preview",
+  "fast_model": "gemini-3-flash-preview"
+}
