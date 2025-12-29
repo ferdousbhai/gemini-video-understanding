@@ -146,6 +146,8 @@ def understand_video(
         if video_metadata:
             file_data_kwargs["video_metadata"] = video_metadata
         parts.append(types.Part(file_data=types.FileData(**file_data_kwargs)))
+        parts.append(prompt)
+        contents = types.Content(parts=parts)
     else:
         # Local file - upload via File API
         video_path = Path(source)
@@ -162,26 +164,14 @@ def understand_video(
         wait_for_file_processing(client, uploaded_file)
         print("Video processed successfully.", file=sys.stderr)
 
-        # Create file reference with optional metadata
-        if video_metadata:
-            parts.append(
-                types.Part(
-                    file_data=types.FileData(
-                        file_uri=uploaded_file.uri, video_metadata=video_metadata
-                    )
-                )
-            )
-        else:
-            parts.append(uploaded_file)
-
-    # Add the text prompt
-    parts.append(types.Part(text=prompt))
+        # For uploaded files, pass directly in a list (simpler API)
+        contents = [uploaded_file, prompt]
 
     # Generate response
     try:
         response = client.models.generate_content(
             model=model,
-            contents=types.Content(parts=parts),
+            contents=contents,
         )
     except Exception as e:
         print(f"Error calling Gemini API: {e}", file=sys.stderr)
