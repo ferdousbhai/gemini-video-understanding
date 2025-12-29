@@ -239,13 +239,21 @@ Examples:
         "--api-key",
         help="Gemini API key (or set GEMINI_API_KEY env var)",
     )
+    parser.add_argument(
+        "--fast",
+        action="store_true",
+        help="Use faster flash model (gemini-3-flash-preview)",
+    )
 
     args = parser.parse_args()
+
+    # --fast overrides --model
+    model = "gemini-3-flash-preview" if args.fast else args.model
 
     result = understand_video(
         source=args.source,
         prompt=args.prompt,
-        model=args.model,
+        model=model,
         fps=args.fps,
         start_offset=args.start_offset,
         end_offset=args.end_offset,

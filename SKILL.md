@@ -9,7 +9,7 @@ description: Analyze and understand videos using Google's Gemini API. Use when t
 uv run ~/.claude/skills/gemini-video-understanding/scripts/understand_video.py \
   --source "path/to/video.mp4" \
   --prompt "Describe what happens in this video" \
-  [--model MODEL_NAME] \
+  [--fast] \
   [--fps 1] \
   [--start 0] \
   [--end 60]
@@ -24,7 +24,7 @@ uv run ~/.claude/skills/gemini-video-understanding/scripts/understand_video.py \
 
 | Option | Description |
 |--------|-------------|
-| `--model` | Override model (defaults to latest capable model) |
+| `--fast` | Use faster flash model instead of pro |
 | `--fps` | Frame rate sampling (default: 1 fps). Use 2+ for fast action |
 | `--start` | Start time in seconds for clipping |
 | `--end` | End time in seconds for clipping |
